@@ -1,0 +1,41 @@
+allcounts.txt contains statistics for the tweets in our data set (which is
+not included here).
+
+The format is:
+
+ISO 639-1 language code, snow form count, ice form count, token count (ie
+total number of tokens across all tweets in this language), tweet count
+(ie total number of tweets in this language)
+
+We take the 42 languages with the most tokens -- see allcodes.txt and
+longnames.txt. We then 
+
+- drop Latin (not current), Experanto (artificial), Breton + Aragonese (no
+  Google translate)
+- drop languages without spaces between words: Japanese, Thai, Chinese
+
+leaving 35 languages in allcodeswithspaces.txt
+
+The backtranslation test filters out these languages:
+
+ar: snow = quick acting, slip
+da: ice = sheet
+de: ice = ice cream
+en: ice = decorate cake
+fa: snow = hydrometeor
+fr: ice = frosting
+id: ice = drink with ice
+ko: ice = water ice, snow = eye
+nl: ice = ice cream
+ro: ice = coldness
+ru: ice = rock
+vi: ice = band, bump
+es: ice = frost 
+lv: snow = "region of perpetual snow"
+    ice = glacial, icy
+tr: ice = glacial
+it: ice  = ice, icy
+tl: ice = pack ice, hailstone, hoarfrost, cube ice
+
+leaving 18 languages in cleancodes.txt
+

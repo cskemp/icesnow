@@ -1,0 +1,43 @@
+Data files specifying which languages merge (ie use the same term for)
+ice/snow and other pairs
+
+IDS+ data
+=========
+
+idspluscolex.mat: information about which languages in IDS+ merge which
+concepts.
+
+editd(i,j) is 1 if language i uses the same term for the concepts in pair
+j, and 0 if the language uses different terms. NaN is used for cases where
+terms for one or both concepts are missing from the wordlist for that
+language. 
+
+isocodes contains ISO language codes for the 323 languages in the data
+set.
+
+lpairs(i,:) contains indices for the concepts in pair i. The indices are
+with respect to the list of 1310 concepts in ids_keys.
+
+langmat(i,j) is 1 if the wordlist for language i includes a term for
+concept j.
+
+idspluscolex.mat was created using wordlists downloaded from IDS and WOLD
+These wordlists and the code used to process them are not included in this
+release, because the IDS license suggests that derivatives may not be
+distributed.
+
+Dictionary data
+===============
+
+librarydata.csv: the original file summarizing the results of the library
+survey. Includes information about words for arm/hand -- these data are
+not discussed in the paper.
+
+dictiscolex.mat: information about which languages in the dictionary data
+set merge which concepts.
+
+Twitter data
+=============
+
+twittercolex.mat: a file that includes glottocodes for the languages in
+the full twitter data set (and no colexification data).

@@ -1,0 +1,111 @@
+# Mixed effects analyses for colexification data
+
+```{r knitr_options, include=FALSE}
+library(knitr)
+opts_chunk$set(fig.width=12, fig.height=4, warning=FALSE, message=FALSE)
+```
+
+### Libraries
+
+```{r libraries}
+library("lme4")
+library("R.matlab")
+```
+
+### Data
+
+```{r datafiles}
+datafiles <- c("rdictisdata.mat", "ridsplusdata.mat")
+datanames <- c("dictionary", "idsplus")
+# index of ice/snow in each data set (ridsplusdata.mat includes colexification data for many pairs)
+icesnowinds <- c(1, 15043)
+# index of mean monthly temperature in data set
+climind <- 6 
+# mean temperature for English (stan1293)
+engmean <- 8.68333
+# mean temperature for Nahuatl (high1278)
+nahmean <- 21.875 
+```
+
+### Analysis loop
+
+```{r analysis}
+
+logit2prob=function(L){
+  exp(L)/(1+exp(L))
+}
+
+for (i in 1:2)  {
+  # create data frame
+  alldata <- readMat(datafiles[i])
+  dataname <- datanames[i]
+  icesnowind <- icesnowinds[i]
+  sameword <- alldata$reditd[,icesnowind]
+  temp <-alldata$rorigclimdata[,climind]/10
+  langnames <- sapply(alldata$rlabels, function(n) n[[1]])
+  langfamily <- alldata$rfamcodes
+  area <- alldata$rautotypcodes
+  d <- data.frame(sameword, temp, langfamily, area)
+
+  # drop cases with missing data
+  completeind <- complete.cases(d)
+  andata <- d[completeind,]
+
+  nlump<- sum(andata$sameword==1)
+  nsplit<- sum(andata$sameword==0)
+
+  cat(c("# lumpers: ", as.character(nlump), "\n"))
+  cat(c("# splitters: ", as.character(nsplit), "\n"))
+
+
+  # box and whisker plot
+  boxplot(temp ~ sameword, data = andata, names = c("split", "merge"), horizontal = TRUE)
+  title(dataname, xlab = "mean temperature")
+
+  # run mixed effects analysis
+  m1 <- glmer(sameword ~ temp + (1|langfamily), data = andata, family = binomial) 
+  m2 <- glmer(sameword ~ (1|langfamily), data = andata, family = binomial)
+  a <- anova(m2, m1)
+
+
+  # Effect size
+  # probability of same word at temperature associated with English
+  prob.at.t0 <- logit2prob(fixef(m1)[1]+ (fixef(m1)[2]*engmean))
+  # probability of smae word at temperature assciated with Nahuatl
+  prob.at.t1 <- logit2prob(fixef(m1)[1] + (fixef(m1)[2]*nahmean))
+  cat("Prob of Same word at t0 (English) =",  sprintf("%.3f\n", prob.at.t0))
+  cat("Prob of Same word at t1 (Nahuatl) =",  sprintf("%.3f\n", prob.at.t1))
+
+  #  summarize results
+  cat(c("Summary of", dataname, "analysis:\n"))
+  print(summary(m1))
+  cat("\n\n\n\n")
+  cat(c("Likelihood ratio test for", dataname, "data :\n"))
+  print(a)
+  cat("\n\n")
+
+  # should we add area random effect?
+  print("Add Random effect for area?")
+  m2_area <- glmer(sameword ~ (1|langfamily) + (1|area), data = andata, family = binomial)
+  print(anova(m2,m2_area))
+
+  # with area random effect
+  print("With Area Random effect")
+  m1.area <- glmer(sameword ~ temp + (1|langfamily) + (1 |area), data = andata, family = binomial) 
+  m2.area <- glmer(sameword ~ (1|langfamily) + (1 |area), data = andata, family = binomial)
+  print(summary(m1.area))
+  print(anova(m2.area, m1.area))
+
+  print("Slope by area")
+  m1.areaslope <- glmer(sameword ~ temp + (1|langfamily) + (1 |area) + (temp|area), data = andata, family = binomial, control=glmerControl(optimizer="bobyqa", optCtrl = list(maxfun = 100000)) ) 
+  m2.areaslope<- glmer(sameword ~ (1|langfamily) + (1 |area) + (temp|area), data = andata, family = binomial, control=glmerControl(optimizer="bobyqa", optCtrl = list(maxfun = 100000)) )
+  print(summary(m1.areaslope))
+  print(anova(m2.areaslope, m1.areaslope))
+
+  # probability of same word at temperature associated with English
+  prob.at.t0 <- logit2prob(fixef(m1.areaslope)[1]+ (fixef(m1.areaslope)[2]*engmean))
+  # probability of smae word at temperature assciated with Nahuatl
+  prob.at.t1 <- logit2prob(fixef(m1.areaslope)[1]+ (fixef(m1.areaslope)[2]*nahmean))
+  cat("Prob of Same word at t0 (English) =",  sprintf("%.3f\n", prob.at.t0))
+  cat("Prob of Same word at t1 (Nahuatl) =",  sprintf("%.3f\n", prob.at.t1))
+}

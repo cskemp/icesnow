@@ -1,0 +1,58 @@
+# Logistic regression analysis for USA English
+
+```{r knitr_options, include=FALSE}
+library(knitr)
+opts_chunk$set(fig.width=6, fig.height=6, warning=FALSE, message=FALSE)
+```
+
+### Libraries
+
+```{r libraries}
+library("lme4")
+library("R.matlab")
+```
+
+### Data
+
+```{r datafiles}
+datafiles <- c("../freqdata/rtwitterusa.mat")
+datanames <- c("Twitter (USA)")
+```
+
+### Analysis loop
+
+```{r analysis}
+for (i in 1:1)  {
+  # create data frame
+  alldata <- readMat(datafiles[i])
+  dataname <- datanames[i]
+  temp <-alldata$rorigclim/10
+  # number of ice/snow tokens per language
+  iscount<- alldata$rrcount[,1]
+  # number of tokens per language
+  allcount<- alldata$rrcount[,2]
+  langnames <- sapply(alldata$rlabels, function(n) n[[1]])
+  d <- data.frame(iscount, allcount, temp)
+
+  # drop cases with missing data
+  completeind <- complete.cases(d)
+  andata <- d[completeind,]
+
+  # make scatter plot
+  plot(temp, log(iscount/(allcount-iscount)), xlab = "temperature", ylab = 'log odds')
+  title(dataname)
+
+  # run logistic regression
+  m1 <- glm(cbind(iscount, allcount - iscount) ~ temp, data = andata, family = binomial)
+  m2 <- glm(cbind(iscount, allcount - iscount) ~ 1, data = andata, family = binomial)
+  a <- anova(m2, m1, test="LRT")
+
+  #  summarize results
+  cat(c("Summary of", dataname, "analysis:\n"))
+  print(summary(m1))
+  cat("\n\n\n\n")
+  cat(c("Likelihood ratio test for", dataname, "data :\n"))
+  print(a)
+  cat("\n\n")
+}
+

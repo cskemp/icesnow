@@ -1,0 +1,16 @@
+
+preparerdata.m: prepare R data files that can be used for mixed-effects analyses
+
+colexification_mixedeffects.Rmd: R markdown file that runs mixed-effects
+analyses for colexification data
+
+colexification_mixedeffects_autotyp.Rmd: similar file that runs
+mixed-effects analyses with language area as a random effect
+
+twitter_mixedeffects.Rmd: R markdown file that runs mixed-effects analyses for twitter data
+
+missingdata_mixedeffects.Rmd: file that runs mixed-effects analysis based
+on IDS+ languages that are missing forms for ice and/or snow
+
+dataminingidsplusme.R: run data-mining analysis
+

@@ -1,0 +1,20 @@
+alldsplusclimate.mat: climate variables for the 246 languages in the IDS+
+data set
+
+dictis.mat: climate variables for the 53 languages in the dictionary data set
+
+twitterclimate.mat: climate variables for the 45 languages in the full
+twitter data set
+
+These variables were extracted from latlong.mat, which includes climate
+invormation associated with glottolog and iso language codes. The data in
+latlong.mat are based on files downloaded from glottolog.
+
+Urban areas:
+
+urbanareas2010.txt was downloaded from
+
+http://www2.census.gov/geo/docs/maps-data/data/gazetteer/2013_Gazetteer/2013_Gaz_ua_national.zip
+
+
+

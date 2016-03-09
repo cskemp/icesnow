@@ -1,0 +1,16 @@
+climatedata.mat:
+===============
+
+data for 30 climate variables across a 360 by 720 latitude by longitude
+grid. 
+
+The original climate data are from 
+
+http://www.ipcc-data.org/observ/clim/get_30yr_means.html
+
+and are not included here.
+
+The scripts for producing climatedata.mat from the raw files are
+readclimatedata.m and maketestvariables.m
+
+

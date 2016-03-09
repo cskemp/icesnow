@@ -1,0 +1,53 @@
+Code for analyses from Regier, Carstensen and Kemp, Languages support
+efficient communication about the environment: Words for snow revisited
+
+asymmetry analysis
+==================
+
+Code for Monte Carlo analysis in Figure 7
+
+autotyp areas 
+=============
+
+files used in assigning autotyp areas to languages
+
+colexificationdata 
+==================
+
+Code for creating data files that specify which languages merge ice/snow
+and other pairs. 
+    - idspluscolex.mat : IDS+ data set
+    - dictiscolexm.mat:  dictionary data set
+
+environmentdata
+================
+
+Code for processing data from the CRU global climate dataset
+
+figures
+=======
+
+Code for generating most figures in the paper
+
+freqdata
+=======
+
+Code for processing the Twitter counts
+
+langtrees
+=========
+
+Assigns languages into families based on Glottolog
+
+langenvironmentdata
+=================== 
+
+Code for creating data files that specify geographic variables (e.g.
+temperature) for languages in 
+    - IDS+ 
+    - dictionary 
+
+mixed effects analyses
+===================== 
+Code for preparing R data files and running mixed-effects analyses
+ 

@@ -1,0 +1,71 @@
+# Mixed-effects analysis of missing forms for ice and/or snow
+
+```{r knitr_options, include=FALSE}
+library(knitr)
+opts_chunk$set(fig.width=12, fig.height=4, warning=FALSE, message=FALSE)
+```
+
+### Libraries
+
+```{r libraries}
+library("lme4")
+library("R.matlab")
+```
+
+### Data
+
+```{r datafiles}
+datafiles <- c("ridsplusdata.mat")
+datanames <- c("idsplus")
+# index of ice/snow in each data set (ridsplusdata.mat includes colexification data for many pairs)
+icesnowinds <- c(15043)
+# index of mean monthly temperature in data set
+climind <- 6 
+```
+
+### Analysis loop
+
+```{r analysis}
+for (i in 1:1)  {
+  # create data frame
+  alldata <- readMat(datafiles[i])
+  dataname <- datanames[i]
+  icesnowind <- icesnowinds[i]
+  sameword <- alldata$reditd[,icesnowind]
+  missform<- sameword
+  missform[is.nan(sameword)] <- 1
+  missform[!is.nan(sameword)] <- 0
+  temp <-alldata$rorigclimdata[,climind]/10
+  langnames <- sapply(alldata$rlabels, function(n) n[[1]])
+  langfamily <- alldata$rfamcodes
+  langmat <- alldata$rlangmat
+  d <- data.frame(missform, temp, langfamily)
+  # include only languages with forms for 1000 or more meanings
+  d <- d[rowSums(langmat)>=1000,]
+
+  # drop cases with missing data
+  completeind <- complete.cases(d)
+  andata <- d[completeind,]
+  nmiss<- sum(andata$missform==1)
+  nnomiss<- sum(andata$missform==0)
+
+  cat(c("# missing form or snow and/or ice: ", as.character(nmiss), "\n"))
+  cat(c("# without missing forms: ", as.character(nnomiss), "\n"))
+
+  # box and whisker plot
+  boxplot(temp ~ missform, data = andata, names = c("both present", "missing"), horizontal = TRUE)
+  title(dataname, xlab = "mean temperature")
+
+  # run mixed effects analysis
+  m1 <- glmer(missform ~ temp + (1|langfamily), data = andata, family = binomial) 
+  m2 <- glmer(missform ~ (1|langfamily), data = andata, family = binomial)
+  a <- anova(m2, m1)
+
+  #  summarize results
+  cat(c("Summary of", dataname, "analysis:\n"))
+  print(summary(m1))
+  cat("\n\n\n\n")
+  cat(c("Likelihood ratio test for", dataname, "data :\n"))
+  print(a)
+  cat("\n\n")
+}

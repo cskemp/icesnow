@@ -1,0 +1,14 @@
+Autotyp area codes (autotyp.csv) were downloaded from
+
+http://www.autotyp.uzh.ch/available.html
+
+on Jan 18, 2016.
+
+The table used to map Glottocodes to AUTOTYP LIDs (code_mappings_iso_wals_autotyp_glottolog.csv) 
+
+was downloaded from 
+
+https://github.com/ddediu/lgfam-newick/blob/master/output/code_mappings_iso_
+wals_autotyp_glottolog.csv
+
+
